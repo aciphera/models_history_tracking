@@ -1,0 +1,28 @@
+panel "Versions History" do
+  table_for assigns[:versions] do
+    column ("Item") do |v|
+      if v.item
+        link_to v.item.id, [:admin, v.item]
+      end
+    end
+    column ("Type") { |v| v.item_type.underscore.humanize }
+    column :event
+    column ("Changes") do |v|
+      if v.event == 'update'
+        v.changeset.except('updated_at').keys
+      else
+        'all fields'
+      end
+    end
+    column ("Modified at") do |v|
+      link_to (v.created_at.to_s :long), admin_history_path(v.id)
+    end
+    column ("Admin") do |v|
+      if v.whodunnit
+        link_to AdminUser.find(v.whodunnit).email, [:admin, AdminUser.find(v.whodunnit)]
+      else
+        'Unknown'
+      end
+    end
+  end
+end
